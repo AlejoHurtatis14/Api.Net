@@ -61,6 +61,21 @@ namespace Api.Net.Controllers
             }
             return NotFound();
         }
+
+        [HttpGet("{id}", Name = "Obtener productos deseados de un usuario")]
+        public async Task<ActionResult<DesiredProduct>> getDesiredProductUser(int id)
+        {
+            var desiredProduct = await dataBase.desiredProducts
+                                    .Include(p => p.product)
+                                    .Include(u => u.user)
+                                    .FirstOrDefaultAsync(p => p.userId == id);
+
+            if (desiredProduct == null)
+            {
+                return NotFound();
+            }
+            return desiredProduct;
+        }
     }
 
     public class PostDesiredProd
