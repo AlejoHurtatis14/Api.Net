@@ -1,7 +1,6 @@
-using Api.Net.Database;
+using Api.Net.Interfaces;
 using Api.Net.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Api.Net.Controllers
 {
@@ -9,26 +8,23 @@ namespace Api.Net.Controllers
     [Route("api/products")]
     public class ProductController : ControllerBase
     {
-        private readonly DataBase dataBase;
+        private IProductRepository productRepository;
 
-        public ProductController(DataBase data)
+        public ProductController(IProductRepository productRepository)
         {
-            dataBase = data;
+            this.productRepository = productRepository;
         }
 
         [HttpGet(Name = "Obtener Lista de Productos")]
         public IEnumerable<Product> listProducts()
         {
-            return dataBase.products.Include(p => p.category).Include(d => d.desiredProducts).ToArray();
+            return productRepository.listProducts();
         }
 
         [HttpGet("{id}", Name = "Obtener Producto")]
         public async Task<ActionResult<Product>> getProduct(int id)
         {
-            var product = await dataBase.products
-                                    .Include(p => p.category)
-                                    .Include(p => p.desiredProducts)
-                                    .FirstOrDefaultAsync(p => p.id == id);
+            var product = await productRepository.getProduct(id);
             if (product == null) {
                 return NotFound();
             }

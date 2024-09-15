@@ -1,7 +1,5 @@
 ﻿using Api.Net.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System;
 
 namespace Api.Net.Database
 {

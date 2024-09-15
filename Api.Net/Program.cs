@@ -1,4 +1,6 @@
 using Api.Net.Database;
+using Api.Net.Interfaces;
+using Api.Net.Repository;
 using Api.Net.Seeders;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -11,6 +13,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
+
+builder.Services.AddScoped<IDesiredProductRepository, DesiredProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<DataBase>(options => options.UseSqlite("Data Source=dataapiproducts.db"));
 

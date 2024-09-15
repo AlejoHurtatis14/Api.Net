@@ -1,7 +1,6 @@
-using Api.Net.Database;
+using Api.Net.Interfaces;
 using Api.Net.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Api.Net.Controllers
 {
@@ -9,54 +8,38 @@ namespace Api.Net.Controllers
     [Route("api/desired-product")]
     public class DesiredProductController : ControllerBase
     {
-        private readonly DataBase dataBase;
 
-        public DesiredProductController(DataBase data)
+        private IDesiredProductRepository desiredProductRepository;
+
+        public DesiredProductController(IDesiredProductRepository desired)
         {
-            dataBase = data;
+            this.desiredProductRepository = desired;
         }
 
         [HttpGet(Name = "Obtener Lista de Productos Deseados")]
         public IEnumerable<DesiredProduct> listProducts()
         {
-            return dataBase.desiredProducts.Include(p => p.product).Include(u => u.user).ToArray();
+            return desiredProductRepository.listProducts();
         }
 
         [HttpPost(Name = "Crear Producto deseado")]
         public async Task<ActionResult<DesiredProduct>> postDesiredProduct(PostDesiredProd postDesiredProd)
         {
+            var response = await desiredProductRepository.postDesiredProduct(postDesiredProd);
 
-            var user = await dataBase.users.FindAsync(postDesiredProd.userId);
-            if (user == null)
+            if (response == null)
             {
                 return NotFound();
             }
-
-            var product = await dataBase.products.FindAsync(postDesiredProd.productId);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            DesiredProduct desiredSave = new DesiredProduct
-            {
-                productId = product.id,
-                userId = user.Id
-            };
-
-            dataBase.desiredProducts.Add(desiredSave);
-            await dataBase.SaveChangesAsync();
-            return Ok(desiredSave);
+            return Ok(response);
         }
 
         [HttpDelete("{id}", Name = "Eliminar Producto deseado")]
         public async Task<ActionResult<DesiredProduct>> deleteDesiredProduct(int id)
         {
-            var desiredProduct = await dataBase.desiredProducts.FindAsync(id);
-
-            if (desiredProduct != null) {
-                dataBase.desiredProducts.Remove(desiredProduct);
-                await dataBase.SaveChangesAsync();
+            var response = (Boolean) await desiredProductRepository.deleteDesiredProduct(id);
+            if (response)
+            {
                 return Ok();
             }
             return NotFound();
@@ -65,10 +48,7 @@ namespace Api.Net.Controllers
         [HttpGet("{id}", Name = "Obtener productos deseados de un usuario")]
         public async Task<ActionResult<DesiredProduct>> getDesiredProductUser(int id)
         {
-            var desiredProduct = await dataBase.desiredProducts
-                                    .Include(p => p.product)
-                                    .Include(u => u.user)
-                                    .FirstOrDefaultAsync(p => p.userId == id);
+            var desiredProduct = await desiredProductRepository.getDesiredProductUser(id);
 
             if (desiredProduct == null)
             {

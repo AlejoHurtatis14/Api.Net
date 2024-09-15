@@ -1,4 +1,4 @@
-using Api.Net.Database;
+using Api.Net.Interfaces;
 using Api.Net.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,17 +8,17 @@ namespace Api.Net.Controllers
     [Route("api/users")]
     public class UserController : ControllerBase
     {
-        private readonly DataBase dataBase;
+        private IUserRepository userRepository;
 
-        public UserController(DataBase data)
+        public UserController(IUserRepository userRepository)
         {
-            dataBase = data;
+            this.userRepository = userRepository;
         }
 
         [HttpGet(Name = "Obtener Lista de usuarios")]
         public IEnumerable<User> getusers()
         {
-            return dataBase.users.ToArray();
+            return userRepository.getusers();
         }
     }
 }

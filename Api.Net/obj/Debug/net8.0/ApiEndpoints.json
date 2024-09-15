@@ -96,6 +96,33 @@
     "EndpointName": "Eliminar Producto deseado"
   },
   {
+    "ContainingType": "Api.Net.Controllers.DesiredProductController",
+    "Method": "getDesiredProductUser",
+    "RelativePath": "api/desired-product/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Api.Net.Models.DesiredProduct",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "Obtener productos deseados de un usuario"
+  },
+  {
     "ContainingType": "Api.Net.Controllers.ProductController",
     "Method": "listProducts",
     "RelativePath": "api/products",
